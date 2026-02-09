@@ -1,0 +1,21 @@
+# Node
+node_modules
+dist
+.env
+.DS_Store
+npm-debug.log
+
+# Hardhat
+artifacts
+cache
+coverage
+coverage.json
+typechain
+typechain-types
+.typechain
+lib
+out
+
+# Deployment
+.deploys
+.deps

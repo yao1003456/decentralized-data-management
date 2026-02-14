@@ -3,11 +3,12 @@
 pragma solidity 0.8.30;
 
 contract DecentralizedDataManagement {
+    // ------------------ structs ------------------
     struct File {
         address owner;
         string cid;
-        bytes capsule; // Changed from string to bytes for PRE capsule
-        bytes ciphertext; // Ciphertext from PRE encapsulation
+        bytes capsule;
+        bytes ciphertext;
         bool exist;
     }
 
@@ -18,6 +19,7 @@ contract DecentralizedDataManagement {
         DENIED
     }
 
+    // ------------------ mappings ------------------
     // map file hash to the access status of each user
     mapping(bytes32 => mapping(address => AccessStatus)) internal acl;
     // maps file hash to files
@@ -30,28 +32,35 @@ contract DecentralizedDataManagement {
     mapping(bytes32 => mapping(address => uint256))
         internal pendingRequestsIndex;
 
-    event userRegistered(address user, string publicKey);
-    event fileUploaded(bytes32 hash, string cid, address owner);
+    // ------------------ events ------------------
+    event userRegistered(address indexed user, string publicKey);
+    event fileUploaded(bytes32 indexed hash, string cid, address indexed owner);
     event accessRequested(
-        bytes32 hash,
+        bytes32 indexed hash,
         string cid,
-        address owner,
-        address requester
+        address indexed owner,
+        address indexed requester
     );
     event accessGranted(
-        bytes32 hash,
+        bytes32 indexed hash,
         string cid,
-        address owner,
-        address requester
+        address indexed owner,
+        address indexed requester
     );
     event accessDenied(
-        bytes32 hash,
+        bytes32 indexed hash,
         string cid,
-        address owner,
-        address requester
+        address indexed owner,
+        address indexed requester
     );
-    event accessRevoked(bytes32 hash, string cid, address owner, address user);
+    event accessRevoked(
+        bytes32 indexed hash,
+        string cid,
+        address indexed owner,
+        address indexed user
+    );
 
+    // ------------------ registration ------------------
     function registerPublicKey(string calldata publicKey) external {
         publicKeys[msg.sender] = publicKey;
         emit userRegistered(msg.sender, publicKey);
@@ -81,6 +90,7 @@ contract DecentralizedDataManagement {
         emit fileUploaded(fileHash, ipfsCid, msg.sender);
     }
 
+    // ------------------ access control ------------------
     function requestAccess(string calldata ipfsCid) external {
         bytes32 fileHash = keccak256(abi.encode(ipfsCid));
         _requireFileExists(fileHash);
@@ -182,7 +192,7 @@ contract DecentralizedDataManagement {
         require(fileMap[fileHash].exist, "File does not exist");
     }
 
-    // getters
+    // ------------------ getters ------------------
     function getAccessStatus(
         string calldata ipfsCid,
         address user

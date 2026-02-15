@@ -13,11 +13,27 @@ async function main() {
     await contract.waitForDeployment();
     const contractAddress = await contract.getAddress();
 
+    // Get deployment block number
+    const deploymentTx = contract.deploymentTransaction();
+    let deployBlock = 0;
+    if (deploymentTx) {
+        const receipt = await deploymentTx.wait();
+        if (receipt) {
+            deployBlock = receipt.blockNumber;
+        }
+    }
+
     console.log("DecentralizedDataManagement deployed to:", contractAddress);
+    console.log("Deployment Block:", deployBlock);
 
     // Update .env files
-    updateEnvFile(path.join(__dirname, "../../distributed-client/.env.local"), "VITE_CONTRACT_ADDRESS", contractAddress);
-    updateEnvFile(path.join(__dirname, "../../distributed-server/.env.local"), "CONTRACT_ADDRESS", contractAddress);
+    const clientEnvPath = path.join(__dirname, "../../distributed-client/.env.local");
+    const serverEnvPath = path.join(__dirname, "../../distributed-server/.env.local");
+
+    updateEnvFile(clientEnvPath, "VITE_CONTRACT_ADDRESS", contractAddress);
+    updateEnvFile(clientEnvPath, "VITE_DEPLOY_BLOCK", deployBlock.toString());
+
+    updateEnvFile(serverEnvPath, "CONTRACT_ADDRESS", contractAddress);
 }
 
 function updateEnvFile(filePath: string, key: string, value: string) {

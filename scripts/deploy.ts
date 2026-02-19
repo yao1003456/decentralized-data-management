@@ -34,6 +34,18 @@ async function main() {
     updateEnvFile(clientEnvPath, "VITE_DEPLOY_BLOCK", deployBlock.toString());
 
     updateEnvFile(serverEnvPath, "CONTRACT_ADDRESS", contractAddress);
+
+    // Update ABI in client
+    const artifactPath = path.join(__dirname, "../artifacts/contracts/DecentralizedDataManagement.sol/DecentralizedDataManagement.json");
+    const clientAbiPath = path.join(__dirname, "../../distributed-client/src/abi.json");
+
+    if (fs.existsSync(artifactPath)) {
+        const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf-8"));
+        fs.writeFileSync(clientAbiPath, JSON.stringify(artifact.abi, null, 2));
+        console.log(`Updated ABI in ${clientAbiPath}`);
+    } else {
+        console.error("Artifact not found, could not update client ABI");
+    }
 }
 
 function updateEnvFile(filePath: string, key: string, value: string) {

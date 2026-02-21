@@ -19,6 +19,7 @@ const config: HardhatUserConfig = {
         sepolia: {
             url: process.env.SEPOLIA_URL || "",
             accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+            chainId: 11155111
         }
     }
 };

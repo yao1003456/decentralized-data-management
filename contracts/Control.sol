@@ -102,7 +102,8 @@ contract DecentralizedDataManagement {
         require(owner != requester, "Owner has automatic access");
         require(
             acl[fileHash][requester] == AccessStatus.DENIED ||
-                acl[fileHash][requester] == AccessStatus.NONE,
+                acl[fileHash][requester] == AccessStatus.NONE ||
+                acl[fileHash][requester] == AccessStatus.REVOKED,
             "Request Pending or Approved"
         );
 

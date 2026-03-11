@@ -16,7 +16,8 @@ contract DecentralizedDataManagement {
         NONE,
         PENDING,
         APPROVED,
-        DENIED
+        DENIED,
+        REVOKED
     }
 
     // ------------------ mappings ------------------
@@ -159,7 +160,7 @@ contract DecentralizedDataManagement {
             "User does not have access"
         );
 
-        acl[fileHash][user] = AccessStatus.NONE;
+        acl[fileHash][user] = AccessStatus.REVOKED;
         emit accessRevoked(fileHash, ipfsCid, msg.sender, user);
     }
 
